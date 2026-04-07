@@ -1,35 +1,29 @@
-variable "resource_group_name" {
-  type = string
+variable "instance_type" {
+  default = "t2.micro"
 }
-variable "network_interface_id" {
-  type = string
+variable "ami" {
+  default = "ami-0c94855ba95c71c99"
 }
-variable "admin_username" {
-  type    = string
-  default = "adminuser"
+variable "vpc_id" {
 }
-variable "admin_password" {
-  type    = string
-  default = "P@ssw0rd1234!"
+variable "public_subnets" {
+  type = list
 }
-resource "azurerm_linux_virtual_machine" "vm" {
-  name                = "mylinuxvirtualmachine"
-  resource_group_name = var.resource_group_name
-  location            = "West US"
-  size                = "Standard_DS2_v2"
-  admin_username      = var.admin_username
-  admin_password      = var.admin_password
-  network_interface_ids = [
-    var.network_interface_id
-  ]
-  os_disk {
-    caching              = "ReadWrite"
-    storage_account_type = "Standard_LRS"
+variable "private_subnets" {
+  type = list
+}
+variable "security_group_id" {
+}
+resource "aws_instance" "asha_ec2" {
+  ami = var.ami
+  instance_type = var.instance_type
+  vpc_security_group_ids = [var.security_group_id]
+  subnet_id = var.public_subnets[0]
+  tags = {
+    Project = "iac-agents"
+    Environment = "dev"
   }
-  source_image_reference {
-    publisher = "Canonical"
-    offer     = "UbuntuServer"
-    sku       = "16.04-LTS"
-    version   = "latest"
-  }
+}
+output "instance_id" {
+  value = aws_instance.asha_ec2.id
 }
