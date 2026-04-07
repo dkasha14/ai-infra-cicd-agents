@@ -46,9 +46,17 @@ class IaCAgent:
 - Use azurerm provider
 - Include resource group
 - Use Azure naming conventions
-
+- ONLY generate resources explicitly mentioned in the requirement
+- DO NOT add any additional resources unless explicitly requested
+- Do not assume best practices that introduce new services
 - DO NOT use deprecated resource "azurerm_virtual_machine"
 - Use azurerm_linux_virtual_machine or azurerm_windows_virtual_machine
+- Do NOT rely on Azure CLI authentication
+- Always configure provider using environment variables (ARM_*)
+- Provider block must only include:
+  provider "azurerm" {
+    features {}
+  }
 
 - Must include:
   os_disk
@@ -88,7 +96,13 @@ Rules:
 - No explanations
 - Use provider "{provider_block}"
 {provider_rules}
+- Every module input variable MUST be defined inside that module
+- Outputs from one module can be passed to another module
+- NEVER reference a module inside itself
 - Avoid reserved names: version, source, providers, count, for_each
+- ONLY generate resources explicitly mentioned in the requirement
+- DO NOT add any additional resources (e.g., S3, RDS, IAM) unless explicitly requested
+- Do not assume best practices that introduce new services
 - Code must be valid
 
 Requirement:
